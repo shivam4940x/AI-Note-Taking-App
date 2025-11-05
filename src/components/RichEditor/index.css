@@ -1,0 +1,315 @@
+/* === Base Editor Styles === */
+.ProseMirror {
+  min-height: 200px;
+  /* padding: 0.5rem 1rem; */
+  /* border: 1px solid #ccc; */
+  color: #333;
+  font-family: "Roboto", sans-serif;
+  font-size: 16px;
+  line-height: 1.7;
+  background-color: transparent;
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+  /* box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); */
+}
+
+/* Dark mode overrides */
+.dark .ProseMirror {
+  /* border-color: #5a5a5a; */
+  color: #ddd;
+  /* box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); optional stronger shadow in dark */
+}
+
+/* .ProseMirror:focus {
+  border-color: #1976d2;
+  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.15);
+  outline: none;
+} */
+@layer base {
+  :focus-visible {
+    outline: none;
+  }
+}
+/* === Headings === */
+.ProseMirror h1,
+.ProseMirror h2,
+.ProseMirror h3,
+.ProseMirror h4,
+.ProseMirror h5,
+.ProseMirror h6 {
+  font-weight: 500;
+  line-height: 1.2;
+  color: #222;
+  margin: 0 0 0.6em;
+}
+
+.dark .ProseMirror h1,
+.dark .ProseMirror h2,
+.dark .ProseMirror h3,
+.dark .ProseMirror h4,
+.dark .ProseMirror h5,
+.dark .ProseMirror h6 {
+  color: #eee;
+}
+
+.ProseMirror h1 {
+  font-size: 2rem;
+}
+.ProseMirror h2 {
+  font-size: 1.75rem;
+}
+.ProseMirror h3 {
+  font-size: 1.5rem;
+}
+.ProseMirror h4 {
+  font-size: 1.25rem;
+}
+.ProseMirror h5 {
+  font-size: 1.125rem;
+}
+.ProseMirror h6 {
+  font-size: 1rem;
+}
+
+/* === Paragraphs === */
+.ProseMirror p {
+  margin: 0.8em 0;
+}
+
+/* === Lists === */
+.ProseMirror ul,
+.ProseMirror ol {
+  padding-left: 2rem;
+  margin: 1em 0;
+}
+
+.ProseMirror li {
+  margin-bottom: 0.4em;
+  line-height: 1.6;
+}
+.ProseMirror li p:last-child::after {
+  all: unset;
+}
+.ProseMirror li p {
+  margin: 0.5rem 0;
+}
+.ProseMirror ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin: 1em 0;
+}
+
+.ProseMirror ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+  margin: 1em 0;
+}
+
+.ProseMirror li {
+  margin-bottom: 0.4em;
+}
+/* === Blockquotes === */
+.ProseMirror blockquote {
+  border-left: 4px solid #1976d2;
+  margin: 1em 0;
+  padding-left: 1em;
+  font-style: italic;
+  color: #555;
+  background: #f8f9fa;
+  border-radius: 4px;
+}
+
+.dark .ProseMirror blockquote {
+  color: #ccc;
+  background: #1e1e1e;
+  border-left-color: #90caf9; /* lighter blue for dark mode */
+}
+
+/* === Inline Code === */
+.ProseMirror code {
+  background: #eeeeee;
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+  font-family: "Fira Code", monospace;
+  font-size: 0.95em;
+}
+
+.dark .ProseMirror code {
+  background: #2c2c2c;
+  color: #e0e0e0;
+}
+
+/* === Code Blocks === */
+.ProseMirror pre {
+  background: #272822;
+  color: #f8f8f2;
+  padding: 1em;
+  border-radius: 4px;
+  overflow-x: auto;
+  font-family: "Fira Code", monospace;
+  font-size: 0.9em;
+}
+
+.dark .ProseMirror pre {
+  background: #1e1e1e;
+  color: #f1f1f1;
+}
+
+/* === Images === */
+.ProseMirror img {
+  max-width: 100%;
+  border-radius: 6px;
+  margin: 1em 0;
+}
+
+/* === Horizontal Rule === */
+.ProseMirror hr {
+  border: none;
+  border-top: 1px solid #ccc;
+  margin: 2em 0;
+}
+
+.dark .ProseMirror hr {
+  border-top-color: #555;
+}
+
+/* === Bold, Italic, Underline === */
+.ProseMirror strong {
+  font-weight: 600;
+}
+
+.ProseMirror em {
+  font-style: italic;
+}
+
+.ProseMirror u {
+  text-decoration: underline;
+}
+
+/* === Strike === */
+.ProseMirror s {
+  text-decoration: line-through;
+}
+
+/* === Superscript & Subscript === */
+.ProseMirror sub {
+  vertical-align: sub;
+  font-size: 0.8em;
+}
+
+.ProseMirror sup {
+  vertical-align: super;
+  font-size: 0.8em;
+}
+
+/* === Tables === */
+.ProseMirror table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1em 0;
+}
+
+/* === Tables === */
+
+.ProseMirror th,
+.ProseMirror td {
+  border: 1px solid #ddd;
+  padding: 0.75em;
+  text-align: left;
+}
+
+.ProseMirror th {
+  background-color: #f1f3f5;
+  font-weight: 600;
+}
+
+.dark .ProseMirror th,
+.dark .ProseMirror td {
+  border-color: #555;
+}
+
+.dark .ProseMirror th {
+  background-color: #2a2a2a;
+  color: #eee;
+}
+
+/* === Custom Highlight === */
+.ProseMirror mark {
+  background-color: #fffb91;
+}
+
+.dark .ProseMirror mark {
+  background-color: #938d00;
+}
+
+/* === Alignment === */
+.ProseMirror .text-left {
+  text-align: left;
+}
+
+.ProseMirror .text-center {
+  text-align: center;
+}
+
+.ProseMirror .text-right {
+  text-align: right;
+}
+
+.ProseMirror .text-justify {
+  text-align: justify;
+}
+
+/* === Placeholder (if implemented) === */
+.ProseMirror p.is-empty::before {
+  content: attr(data-placeholder);
+  color: #aaa;
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+.dark .ProseMirror p.is-empty::before {
+  color: #666;
+}
+
+/* === Trailing line === */
+.ProseMirror p:last-child::after {
+  content: "";
+  display: inline-block;
+  width: 100%;
+  height: 1em;
+}
+
+/* === Custom Highlight === */
+.ProseMirror mark {
+  background-color: #ffe08a;
+  border-radius: 3px;
+  padding: 0.2rem 0.4rem;
+}
+
+.dark .ProseMirror mark {
+  background-color: #8a7200;
+}
+
+.ProseMirror mark::selection {
+  background-color: rgba(0, 0, 0, 0.1);
+  color: inherit;
+}
+
+/* === Links === */
+.ProseMirror a {
+  color: #1976d2;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.dark .ProseMirror a {
+  color: #90caf9;
+}
+@layer utilities {
+  .\[\&_svg\:not\(\[class\*\=\'size-\'\]\)\]\:size-4 {
+    & svg:not([class*="size-"]) {
+      width: calc(var(--spacing) * 3.5);
+      height: calc(var(--spacing) * 3.5);
+    }
+  }
+}

@@ -39,7 +39,7 @@
   font-weight: 500;
   line-height: 1.2;
   color: #222;
-  margin: 0 0 0.6em;
+  margin: 0.6em 0;
 }
 
 .dark .ProseMirror h1,
@@ -305,11 +305,10 @@
 .dark .ProseMirror a {
   color: #90caf9;
 }
-@layer utilities {
-  .\[\&_svg\:not\(\[class\*\=\'size-\'\]\)\]\:size-4 {
-    & svg:not([class*="size-"]) {
-      width: calc(var(--spacing) * 3.5);
-      height: calc(var(--spacing) * 3.5);
-    }
+
+.\[\&_svg\:not\(\[class\*\=\'size-\'\]\)\]\:size-4 {
+  & svg:not([class*="size-"]) {
+    width: calc(var(--spacing) * 3.5);
+    height: calc(var(--spacing) * 3.5);
   }
 }

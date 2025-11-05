@@ -15,5 +15,14 @@ const session = async (c: Context, next: Next) => {
   c.set("session", session.session);
   await next();
 };
+const requireSession = async (c: Context, next: Next) => {
+  const user = c.get("user");
 
-export { session };
+  if (!user) {
+    return c.json({ error: "Unauthorized" }, 401);
+  }
+
+  return next();
+};
+
+export { session, requireSession };

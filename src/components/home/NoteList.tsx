@@ -8,14 +8,14 @@ export default function NoteList({ notes }: { notes: Note[] }) {
   const router = useRouter();
   const params = useSearchParams();
   const selected = params.get("note");
-
   return (
-    <ul className="space-y-2">
+    <ul className="space-y-2 group px-6 py-4">
+    
       {notes.map((note) => (
-        <li key={note.id}>
+        <li key={note.id} className="note transition-transform">
           <Card
             onClick={() => router.push(`/?note=${note.id}`)}
-            className={`cursor-pointer hover:bg-accent transition 
+            className={`cursor-pointer hover:bg-accent transition  
               ${selected === note.id ? "border border-primary" : ""}`}
           >
             <CardHeader>

@@ -2,14 +2,10 @@ import { Note, Prisma } from "@/generated";
 import prisma from "@/prisma/main.prisma";
 import { InterfaceGetResult } from "@/types/crud.interfaces";
 
-export async function createNote(
-  userId: string,
-  title: string,
-  content: string
-) {
+export async function createNote(userId: string, title: string) {
   try {
     const note = await prisma.note.create({
-      data: { title, content, userId },
+      data: { title, content: "", userId },
     });
     return { ok: true, note };
   } catch (err) {
@@ -75,30 +71,27 @@ export async function getNote(userId: string, noteId: string) {
 }
 
 export async function updateNote(
-  userId: string,
   noteId: string,
   data: { title?: string; content?: string }
 ) {
   try {
-    const result = await prisma.note.updateMany({
-      where: { id: noteId, userId },
+    const note = await prisma.note.update({
+      where: { id: noteId },
       data,
     });
-    if (result.count === 0)
-      return { ok: false, error: "Unauthorized or note missing" };
-    return { ok: true };
-  } catch {
+
+    return { ok: true, note };
+  } catch (err) {
+    console.error(err);
     return { ok: false, error: "Failed to update note" };
   }
 }
 
-export async function deleteNote(userId: string, noteId: string) {
+export async function deleteNote(noteId: string) {
   try {
-    const result = await prisma.note.deleteMany({
-      where: { id: noteId, userId },
+    await prisma.note.delete({
+      where: { id: noteId },
     });
-    if (result.count === 0)
-      return { ok: false, error: "Unauthorized or note missing" };
     return { ok: true };
   } catch {
     return { ok: false, error: "Failed to delete note" };

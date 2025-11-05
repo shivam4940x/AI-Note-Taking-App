@@ -11,24 +11,21 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "next/navigation";
 // zod schema
 const NoteSchema = z.object({
   title: z.string().min(1, "Title is required"),
-  content: z.string().min(1, "Content is required"),
 });
 
 export default function NewNoteDialog() {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    const parsed = NoteSchema.safeParse({ title, content });
+    const parsed = NoteSchema.safeParse({ title });
     if (!parsed.success) {
       setError(parsed.error.issues[0].message);
       return;
@@ -43,7 +40,6 @@ export default function NewNoteDialog() {
     });
 
     setTitle("");
-    setContent("");
     setOpen(false);
     router.refresh();
   }
@@ -51,8 +47,9 @@ export default function NewNoteDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>New Note +</Button>
+        <Button variant="outline">Add a note</Button>
       </DialogTrigger>
+
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add New Note</DialogTitle>
@@ -66,13 +63,6 @@ export default function NewNoteDialog() {
             required
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-          />
-
-          <Textarea
-            placeholder="Note Content"
-            required
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
           />
 
           <Button type="submit" className="w-full">

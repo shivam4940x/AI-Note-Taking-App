@@ -118,3 +118,10 @@
     @apply bg-background text-foreground;
   }
 }
+button {
+  cursor: pointer;
+}
+.red {
+  @apply bg-[#FF0000]/10 text-[#FF0000]/80 transition-colors hover:bg-[#FF0000]/10;
+}
+

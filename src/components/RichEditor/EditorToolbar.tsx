@@ -1,14 +1,6 @@
-import { useState } from "react";
 import type { Editor } from "@tiptap/react";
 import { Button } from "@/components/ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-} from "@/components/ui/popover";
-import { Input } from "@/components/ui/input";
-
 import {
   Bold,
   Italic,
@@ -26,8 +18,6 @@ import {
   Code,
   Minus,
   PaintBucket,
-  Link,
-  Link2Off,
   Heading1,
   Heading2,
   Heading3,
@@ -39,13 +29,13 @@ interface Props {
 }
 
 export function EditorToolbar({ editor }: Props) {
-  const [url, setUrl] = useState("");
+  // const [url, setUrl] = useState("");
   if (!editor) return null;
 
-  const applyLink = () => {
-    if (url.trim().length === 0) return;
-    editor.chain().focus().setLink({ href: url }).run();
-  };
+  // const applyLink = () => {
+  //   if (url.trim().length === 0) return;
+  //   editor.chain().focus().setLink({ href: url }).run();
+  // };
 
   return (
     <div className="flex flex-wrap items-center gap-2">
@@ -231,7 +221,7 @@ export function EditorToolbar({ editor }: Props) {
       </ToggleGroup>
 
       {/* Link */}
-      <div className="flex border rounded-md overflow-hidden">
+      {/* <div className="flex border rounded-md overflow-hidden">
         <Popover>
           <PopoverTrigger asChild>
             <Button
@@ -264,7 +254,7 @@ export function EditorToolbar({ editor }: Props) {
         >
           <Link2Off />
         </Button>
-      </div>
+      </div> */}
 
       {/* Extra */}
       <div className="flex border rounded-md overflow-hidden">

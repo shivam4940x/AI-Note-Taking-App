@@ -39,7 +39,7 @@ export default function SearchWithSuggestions() {
   }, [query]);
 
   return (
-    <div className="relative w-full max-w-md">
+    <div className="relative w-full">
       <Command className="rounded-lg border">
         <CommandInput
           placeholder="Search notes..."

@@ -8,8 +8,7 @@ export const auth = betterAuth({
     provider: "mongodb",
   }),
   // Allow requests from the frontend development server
-  trustedOrigins: ["http://localhost:3000"],
-  secret: process.env.BETTER_AUTH_SECRET,
+  secret: process.env.BETTER_AUTH_SECRET || "abc",
   emailAndPassword: {
     enabled: true,
     minPasswordLength: 5,

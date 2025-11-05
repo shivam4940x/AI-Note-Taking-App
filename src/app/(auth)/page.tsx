@@ -26,7 +26,6 @@ export default async function Home({
   }
   const res = await fetch(`${process.env.BETTER_AUTH_URL}/api/notes`, {
     cache: "no-store",
-    next: { revalidate: 0 },
     headers: headers(),
   });
 

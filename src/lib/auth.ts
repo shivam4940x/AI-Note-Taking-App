@@ -9,6 +9,7 @@ export const auth = betterAuth({
   }),
   // Allow requests from the frontend development server
   trustedOrigins: ["http://localhost:3000"],
+  secret: process.env.BETTER_AUTH_SECRET,
   emailAndPassword: {
     enabled: true,
     minPasswordLength: 5,

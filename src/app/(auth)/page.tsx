@@ -17,8 +17,12 @@ export default async function Home({
 }: {
   searchParams: { note?: string };
 }) {
+  const requestHeaders = headers();
+  const cookie = requestHeaders.get("cookie") ?? "";
   const session = await auth.api.getSession({
-    headers: headers(),
+    headers: {
+      cookie,
+    },
   });
 
   if (!session || !session.user) {
@@ -26,7 +30,9 @@ export default async function Home({
   }
   const res = await fetch(`${process.env.BETTER_AUTH_URL}/api/notes`, {
     cache: "no-store",
-    headers: headers(),
+    headers: {
+      cookie,
+    },
   });
 
   // explicitly type the JSON response

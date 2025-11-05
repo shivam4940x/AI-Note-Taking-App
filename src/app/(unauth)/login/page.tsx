@@ -2,24 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, signupSchema } from "@/lib/schema/auth.zod";
-import { authClient } from "@/lib/auth";
+import { z } from "zod";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
-
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { authClient } from "@/lib/auth";
 import Loading from "@/components/utils/loading";
 
 type LoginForm = z.infer<typeof loginSchema>;
@@ -54,105 +42,128 @@ export default function AuthForm() {
           password: data.password,
         });
 
-        if (res.error) return toast.error(res.error.message);
+        if (res.error) {
+          toast.error(res.error.message);
+          return;
+        }
 
         toast.success("Signed in");
         router.push("/");
         return;
       }
 
-      if (!("username" in data) || !data.username?.trim()) {
-        return toast.error("Username is required");
+      if (mode === "signup") {
+        if (!("username" in data) || !data.username?.trim()) {
+          toast.error("Username is required");
+          return;
+        }
+
+        const res = await authClient.signUp.email({
+          email: data.email,
+          password: data.password,
+          name: data.username,
+        });
+
+        if (res.error) {
+          toast.error(res.error.message);
+          return;
+        }
+
+        toast.success("Account created");
+        router.push("/");
+        return;
       }
-
-      const res = await authClient.signUp.email({
-        email: data.email,
-        password: data.password,
-        name: data.username,
-      });
-
-      if (res.error) return toast.error(res.error.message);
-
-      toast.success("Account created");
-      router.push("/");
     } finally {
       setLoading(false);
     }
   }
 
+  useEffect(() => {
+    const fetchData = async () => {
+      const session = await authClient.getSession();
+      if (session.data) {
+        // router.push("/");
+      }
+    };
+    fetchData();
+  }, [router]);
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
-      <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle>
-            {mode === "signin" ? "Sign In" : "Create Account"}
-          </CardTitle>
-          <CardDescription>
-            {mode === "signin"
-              ? ""
-              : "Create a new account to get started."}
-          </CardDescription>
-        </CardHeader>
+    <div className="min-h-screen flex items-center justify-center bg-neutral-900">
+      <div className="w-full max-w-sm p-6 bg-neutral-800 rounded-lg shadow">
+        <h2 className="text-2xl font-semibold text-white mb-6 text-center">
+          {mode === "signin" ? "Sign In" : "Sign Up"}
+        </h2>
 
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <CardContent className="space-y-2">
-            {mode === "signup" && (
-              <div className="space-y-1">
-                <Input {...register("username")} placeholder="Username" />
-                {"username" in errors && (
-                  <p className="text-red-500 text-xs">
-                    {errors.username?.message}
-                  </p>
-                )}
-              </div>
-            )}
-
-            <div className="space-y-1">
-              <Input {...register("email")} placeholder="Email" type="email" />
-              {errors.email && (
-                <p className="text-red-500 text-xs">{errors.email.message}</p>
-              )}
-            </div>
-
-            <div className="space-y-1">
-              <Input
-                {...register("password")}
-                placeholder="Password"
-                type="password"
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          {mode === "signup" && (
+            <div>
+              <input
+                {...register("username")}
+                type="text"
+                placeholder="Username"
+                className="w-full px-3 py-2 bg-neutral-700 border border-neutral-600 rounded text-white"
               />
-              {errors.password && (
-                <p className="text-red-500 text-xs">
-                  {errors.password.message}
+              {"username" in errors && (
+                <p className="text-red-400 text-sm mt-1">
+                  {errors.username?.message}
                 </p>
               )}
             </div>
-          </CardContent>
+          )}
 
-          <CardFooter className="flex flex-col gap-3">
-            <Button type="submit" disabled={loading} className="w-full mt-5">
-              {loading ? (
-                <div className="flex gap-2 items-center">
-                  Please wait <Loading />
-                </div>
-              ) : mode === "signin" ? (
-                "Sign In"
-              ) : (
-                "Create Account"
-              )}
-            </Button>
+          <div>
+            <input
+              {...register("email")}
+              type="email"
+              placeholder="Email"
+              className="w-full px-3 py-2 bg-neutral-700 border border-neutral-600 rounded text-white"
+            />
+            {errors.email && (
+              <p className="text-red-400 text-sm mt-1">
+                {errors.email.message}
+              </p>
+            )}
+          </div>
 
-            <Button
-              type="button"
-              variant="ghost"
-              disabled={loading}
-              className="text-sm w-full"
-              onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
-            >
-              {mode === "signin" ? "Need an account?" : "Already have one?"}
-            </Button>
-          </CardFooter>
+          <div>
+            <input
+              {...register("password")}
+              type="password"
+              placeholder="Password"
+              className="w-full px-3 py-2 bg-neutral-700 border border-neutral-600 rounded text-white"
+            />
+            {errors.password && (
+              <p className="text-red-400 text-sm mt-1">
+                {errors.password.message}
+              </p>
+            )}
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-2 bg-purple-600 disabled:opacity-50 hover:bg-purple-700 text-white font-medium rounded transition"
+          >
+            {loading ? (
+              <div className="flex gap-2 w-full items-center justify-center">
+                Please wait... <Loading />
+              </div>
+            ) : mode === "signin" ? (
+              "Sign In"
+            ) : (
+              "Create Account"
+            )}
+          </button>
         </form>
-      </Card>
+
+        <button
+          onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
+          disabled={loading}
+          className="mt-4 w-full text-sm text-purple-400 hover:underline text-center disabled:opacity-50"
+        >
+          {mode === "signin" ? "Need an account?" : "Already have one?"}
+        </button>
+      </div>
     </div>
   );
 }

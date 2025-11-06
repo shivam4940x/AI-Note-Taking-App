@@ -7,7 +7,7 @@ A full-stack note-taking application with AI-powered content enhancement. Users 
 | Layer | Technologies |
 |------|--------------|
 | Frontend | Next.js 14 (App Router), TypeScript, Tailwind CSS, shadcn/ui, React Hook Form |
-| Backend | Hono.js API Routes, Prisma ORM, PostgreSQL |
+| Backend | Hono.js API Routes, Prisma ORM, MongoDB |
 | Authentication | Better Auth |
 | State Management | Zustand |
 | AI Integration | Google GenAI (`@google/genai`) |

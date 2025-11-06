@@ -9,7 +9,7 @@ interface NoteStore {
 
   selectedNoteId: string | null;
   setSelectedNoteId: (id: string | null) => void;
-
+  currentPage: number;
   fetchNotes: (opts?: {
     page?: number;
     limit?: number;
@@ -30,10 +30,10 @@ export const useNoteStore = create<NoteStore>((set, get) => ({
 
   selectedNoteId: null,
   setSelectedNoteId: (id) => set({ selectedNoteId: id }),
-
+  currentPage: 0,
   fetchNotes: async (opts = {}) => {
     const { page = 1, limit = 10 } = opts;
-
+    if (page <= get().currentPage) return;
     const res = await fetch(`/api/notes?page=${page}&limit=${limit}`, {
       cache: "no-store",
     });
@@ -45,6 +45,7 @@ export const useNoteStore = create<NoteStore>((set, get) => ({
     set((state) => ({
       notes: page === 1 ? result.data : [...state.notes, ...result.data],
       hasMore: newNotes.length === limit,
+      currentPage: page,
     }));
   },
 

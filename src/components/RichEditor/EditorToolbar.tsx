@@ -83,36 +83,25 @@ export function EditorToolbar({ editor }: Props) {
         ))}
       </ToggleGroup>
 
-      {/* Headings */}
-      <ToggleGroup
-        className="border flex flex-col md:flex-row"
-        type="single"
-        value={
-          editor.isActive("heading", { level: 1 })
-            ? "h1"
-            : editor.isActive("heading", { level: 2 })
-            ? "h2"
-            : editor.isActive("heading", { level: 3 })
-            ? "h3"
-            : editor.isActive("heading", { level: 4 })
-            ? "h4"
-            : ""
-        }
-        onValueChange={(value) => {
-          if (!value) return;
-          const level =
-            value === "h1" ? 1 : value === "h2" ? 2 : value === "h3" ? 3 : 4; // value === "h4"
-
-          editor.chain().focus().toggleHeading({ level }).run();
-        }}
-      >
+      <ToggleGroup className="border flex flex-col md:flex-row" type="single">
         {[1, 2, 3, 4].map((level, i) => {
           const Icon = [Heading1, Heading2, Heading3, Heading4][i];
+
           return (
             <ToggleGroupItem
-              className="md:border-r last:border-0"
               key={level}
               value={`h${level}`}
+              className="md:border-r last:border-0"
+              onClick={() => {
+                const lvl = level as 1 | 2 | 3 | 4;
+
+                if (editor.isActive("heading", { level: lvl })) {
+                  editor.chain().focus().setParagraph().run();
+                  return;
+                }
+
+                editor.chain().focus().toggleHeading({ level: lvl }).run();
+              }}
             >
               <Icon />
             </ToggleGroupItem>
@@ -190,34 +179,25 @@ export function EditorToolbar({ editor }: Props) {
       </ToggleGroup>
 
       {/* Alignment */}
-      <ToggleGroup
-        type="single"
-        className="border flex flex-col md:flex-row"
-        value={
-          editor.isActive({ textAlign: "left" })
-            ? "left"
-            : editor.isActive({ textAlign: "center" })
-            ? "center"
-            : editor.isActive({ textAlign: "right" })
-            ? "right"
-            : ""
-        }
-        onValueChange={(value) => {
-          if (!value) return;
-          editor.chain().focus().setTextAlign(value).run();
-        }}
-      >
-        <ToggleGroupItem className={"md:border-r last:border-0"} value="left">
-          <AlignLeft />
-        </ToggleGroupItem>
-
-        <ToggleGroupItem className={"md:border-r last:border-0"} value="center">
-          <AlignCenter />
-        </ToggleGroupItem>
-
-        <ToggleGroupItem className={"md:border-r last:border-0"} value="right">
-          <AlignRight />
-        </ToggleGroupItem>
+      <ToggleGroup type="single" className="border flex flex-col md:flex-row">
+        {(["left", "center", "right"] as const).map((align) => (
+          <ToggleGroupItem
+            key={align}
+            value={align}
+            className="md:border-r last:border-0"
+            onClick={() => {
+              if (editor.isActive({ textAlign: align })) {
+                editor.chain().focus().unsetTextAlign().run();
+              } else {
+                editor.chain().focus().setTextAlign(align).run();
+              }
+            }}
+          >
+            {align === "left" && <AlignLeft />}
+            {align === "center" && <AlignCenter />}
+            {align === "right" && <AlignRight />}
+          </ToggleGroupItem>
+        ))}
       </ToggleGroup>
 
       {/* Link */}

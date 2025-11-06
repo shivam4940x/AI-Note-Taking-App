@@ -17,6 +17,7 @@ export default function NoteList() {
 
   useEffect(() => {
     const load = async () => {
+      setLoading(true);
       await fetchNotes({ page });
       setLoading(false);
       if (selected) setSelectedNoteId(selected);
@@ -24,7 +25,7 @@ export default function NoteList() {
     load();
   }, [page, selected, setSelectedNoteId, fetchNotes]);
 
-  if (loading) {
+  if (loading && notes.length === 0) {
     return (
       <div className="flex gap-2 justify-center items-center">
         <Loading />
@@ -35,7 +36,7 @@ export default function NoteList() {
 
   return (
     <div>
-      <ul className="space-y-2 group px-6 py-4">
+      <ul className="space-y-2 group p-4">
         {notes.map((note) => (
           <li key={note.id} className="note transition-transform">
             <Card
@@ -57,10 +58,12 @@ export default function NoteList() {
       <Button
         variant={"ghost"}
         disabled={!hasMore}
-        onClick={() => setPage((p) => p + 1)}
+        onClick={() => {
+          setPage((p) => p + 1);
+        }}
         className="w-full"
       >
-        {hasMore ? "Show more" : "No more notes"}
+        {loading ? <Loading /> : hasMore ? "Show more" : "No more notes"}
       </Button>
     </div>
   );

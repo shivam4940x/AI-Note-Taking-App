@@ -57,6 +57,18 @@ export async function getNotes(
     return { ok: false, error: "Failed to fetch notes" };
   }
 }
+export async function getNotesLen(userId: string) {
+  try {
+    const total = await prisma.note.count({ where: { userId } });
+    return {
+      ok: true,
+      data: total,
+    };
+  } catch (err) {
+    console.error(err);
+    return { ok: false, error: "Failed to fetch notes" };
+  }
+}
 
 export async function getNote(userId: string, noteId: string) {
   try {

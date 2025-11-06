@@ -9,6 +9,7 @@ export const Logout = () => {
       onClick={async () => {
         await authClient.signOut();
         router.refresh();
+        router.refresh();
         router.push("/login");
       }}
     >

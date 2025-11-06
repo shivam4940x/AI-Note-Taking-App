@@ -86,7 +86,7 @@ export default function RichTextEditor({
         <EditorToolbar editor={editor} />
       </CardHeader>
       <Separator className="hidden md:block" />
-      <CardContent className="md:px-2 grow">
+      <CardContent className="md:px-2 grow ml-2">
         {/* <Separator className="mb-2" /> */}
         <EditorContent
           editor={editor}

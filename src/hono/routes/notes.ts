@@ -5,6 +5,7 @@ import {
   createNote,
   deleteNote,
   getNotes,
+  getNotesLen,
   updateNote,
 } from "@/prisma/modules/notes";
 import { Hono } from "hono";
@@ -36,7 +37,16 @@ Notes.get("/", async (c) => {
 
   return c.json(result, 200);
 });
+Notes.get("/len", async (c) => {
+  const user = c.get("user");
+  if (!user || user == null) return c.json({ error: "Unauthorized" }, 401);
 
+  const result = await getNotesLen(user.id);
+
+  if (!result.ok) return c.json({ error: result.error }, 500);
+
+  return c.json(result, 200);
+});
 Notes.post("/add", async (c) => {
   const user = c.get("user");
   if (!user) return c.json({ error: "Unauthorized" }, 401);

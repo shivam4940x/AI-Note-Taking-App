@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Note } from "@/generated";
 import { Button } from "../../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card";
 import RichTextEditor from "../../RichEditor";
@@ -12,41 +11,84 @@ import Loading from "../../utils/loading";
 import { ArrowLeft, CheckCircle, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import AiBtn from "./AIBtn";
-import { callAI } from "../../utils/fetch/ai";
-import { getAIPrompt } from "../../../lib/ai.prompt";
+import { useNoteStore } from "@/store/useNoteStore";
+import { SmolActionsMenu } from "./ActionsMenu";
+import { useAiActions } from "@/hooks/ai";
 
-export default function MrNote({
-  selectedNote,
-}: {
-  selectedNote: Note | undefined;
-}) {
+export default function MrNote() {
   const [editing, setEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const { updateNote, notes, selectedNoteId, deleteNote } = useNoteStore();
+  const selectedNote = notes.find((n) => n.id === selectedNoteId);
   const [value, setValue] = useState(selectedNote?.content ?? "");
   const [title, setTitle] = useState(selectedNote?.title ?? "");
   const router = useRouter();
   const [NoteWrapper, setNoteWrapper] = useState<HTMLDivElement | null>(null);
   const [isSmol, setIsSmol] = useState(true);
   const [isChanged, setIsChanged] = useState(false);
-  useEffect(() => {
+
+  //handlers
+  async function handleSave() {
+    if (!selectedNote) return;
+    if (title.trim() === "") {
+      toast.error("Title can't be empty");
+      return;
+    }
+
+    setIsLoading(true);
+
+    toast.promise(
+      updateNote(selectedNote.id, { content: value, title })
+        .then(() => {
+          setIsChanged(false);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        }),
+      {
+        loading: "Updating...",
+        success: "Updated",
+        error: "Failed to save",
+      }
+    );
+
+    setEditing(false);
+  }
+  async function handleDelete() {
     if (!selectedNote) return;
 
+    setIsLoading(true);
+    try {
+      toast.promise(deleteNote(selectedNote.id), {
+        loading: "Deleting...",
+        success: "Deleted",
+        error: "Failed to delete",
+      });
+      setIsChanged(false);
+      router.push("/");
+      if (isSmol && NoteWrapper) {
+        NoteWrapper.style.transform = "translateX(0%)";
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  }
+  // AI Features
+  const AI = useAiActions({ value, setValue, setTitle, setIsLoading });
+  // all useEffects here
+  useEffect(() => {
+    if (!editing) {
+      setValue(selectedNote?.content ?? "");
+      setTitle(selectedNote?.title ?? "");
+    }
+  }, [selectedNote, editing, selectedNoteId]);
+  useEffect(() => {
+    if (!selectedNote) return;
     const contentChanged = value !== (selectedNote.content ?? "");
     const titleChanged = title !== (selectedNote.title ?? "");
 
     setIsChanged(contentChanged || titleChanged);
-  }, [value, title, selectedNote]);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsSmol(window.innerWidth < 768);
-    };
-    setIsSmol(window.innerWidth < 768);
-    window.addEventListener("resize", handleResize);
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
+  }, [value, title, selectedNote, selectedNoteId]);
 
   useEffect(() => {
     if (!isSmol) return;
@@ -57,104 +99,17 @@ export default function MrNote({
     if (NoteWrapper && selectedNote) {
       NoteWrapper.style.transform = "translateX(-100%)";
     }
-  }, [selectedNote, NoteWrapper, isSmol]);
-
-  async function handleSave() {
-    if (!selectedNote) return;
-    if (title.trim() == "") {
-      toast.error("Title can't be empty");
-      return;
-    }
-    setIsLoading(true);
-
-    toast.promise(
-      fetch(`/api/notes/${selectedNote.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content: value, title }),
-      }).finally(() => {
-        setIsLoading(false);
-      }),
-      {
-        loading: "Updating...",
-        success: "Updated",
-        error: "Failed to save",
-      }
-    );
-    setEditing(false);
-    router.refresh();
-    router.refresh();
-  }
-  async function handleDelete() {
-    if (!selectedNote) return;
-
-    setIsLoading(true);
-    try {
-      toast.promise(
-        fetch(`/api/notes/${selectedNote.id}`, {
-          method: "DELETE",
-        }),
-        {
-          loading: "Deleting...",
-          success: "Deleted",
-          error: "Failed to delete",
-        }
-      );
-      router.refresh();
-      router.refresh();
-      router.push("/");
-      if (isSmol && NoteWrapper) {
-        NoteWrapper.style.transform = "translateX(0%)";
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  }
-  const AiFeatures = {
-    onSummary: async () =>
-      callAI({
-        value,
-        prompt: getAIPrompt("summary", value),
-        successMessage: "Summarized",
-        toast,
-        setIsLoading,
-        onResult: (output) => setValue(output),
-      }),
-
-    onImprove: async () =>
-      callAI({
-        value,
-        prompt: getAIPrompt("improve", value),
-        successMessage: "Improved",
-        toast,
-        setIsLoading,
-        onResult: (output) => setValue(output),
-      }),
-
-    onTags: async () =>
-      callAI({
-        value,
-        prompt: getAIPrompt("tags", value),
-        successMessage: "Tags added",
-        toast,
-        setIsLoading,
-        onResult: (output) => {
-          const tags = output
-            .split(",")
-            .map((t) => t.trim())
-            .filter(Boolean);
-          setTitle((prev) => `${prev}  #${tags.join(" #")}`);
-        },
-      }),
-  };
-
+  }, [selectedNote, NoteWrapper, isSmol, selectedNoteId]);
   useEffect(() => {
-    if (!editing) {
-      setValue(selectedNote?.content ?? "");
-      setTitle(selectedNote?.title ?? "");
-    }
-  }, [selectedNote, editing]);
-
+    const handleResize = () => {
+      setIsSmol(window.innerWidth < 768);
+    };
+    setIsSmol(window.innerWidth < 768);
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
   if (!selectedNote) {
     return (
       <Card>
@@ -196,28 +151,40 @@ export default function MrNote({
           className="md:text-2xl text-center md:text-left bg-transparent rounded-none px-1 font-medium border-0 p-0 focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none"
         />
 
-        <div className="flex gap-2 justify-center items-center flex-row-reverse">
-          <Button
-            disabled={isLoading || !isChanged}
-            variant="ghost"
-            size="lg"
-            onClick={handleSave}
-            className="bg-gray-600/10"
-          >
-            {isLoading ? <Loading /> : <CheckCircle />}
-          </Button>
-          <AiBtn isLoading={isLoading} {...AiFeatures} />
-
-          <Button
-            disabled={isLoading}
-            variant="ghost"
-            size="lg"
-            className="red"
-            onClick={handleDelete}
-          >
-            <Trash />
-          </Button>
-        </div>
+        {isSmol ? (
+          <SmolActionsMenu
+            isLoading={isLoading}
+            isChanged={isChanged}
+            handleSave={handleSave}
+            handleDelete={handleDelete}
+            AiFeatures={AI}
+          />
+        ) : (
+          <div className="flex gap-2 justify-center items-center">
+            <Button
+              disabled={isLoading}
+              variant="ghost"
+              size="lg"
+              className="red"
+              onClick={handleDelete}
+            >
+              {" "}
+              <Trash />{" "}
+            </Button>{" "}
+            <Separator orientation="vertical" className="" />
+            <Button
+              disabled={isLoading || !isChanged}
+              variant="ghost"
+              size="lg"
+              onClick={handleSave}
+              className="bg-gray-600/10"
+            >
+              {" "}
+              {isLoading ? <Loading /> : <CheckCircle />}{" "}
+            </Button>
+            <AiBtn isLoading={isLoading} AI={AI} />{" "}
+          </div>
+        )}
       </CardHeader>
 
       <Separator className="hidden md:block" />

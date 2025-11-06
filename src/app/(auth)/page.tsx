@@ -3,20 +3,19 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import SearchWithSuggestions from "@/components/home/SearchBar";
-import { InterfaceGetResult } from "@/types/crud.interfaces";
-import { Note } from "@/generated";
+
 import NoteList from "@/components/home/NoteList";
 import MrNote from "@/components/home/MrNote";
 import ThemeToggle from "@/components/utils/ThemeToggle";
 import NewNoteDialog from "@/components/home/new-note-dialog";
 import { Separator } from "@/components/ui/separator";
-import ProfileMenu from "@/components/home/ProfileMenu";
+import { DropdownMenu, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { User } from "lucide-react";
+import { DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel } from "@/components/ui/dropdown-menu";
+import { Logout } from "@/components/utils/Logout";
 
-export default async function Home({
-  searchParams,
-}: {
-  searchParams: { note?: string };
-}) {
+export default async function Home() {
   const requestHeaders = headers();
   const cookie = requestHeaders.get("cookie") ?? "";
   const session = await auth.api.getSession({
@@ -28,7 +27,7 @@ export default async function Home({
   if (!session || !session.user) {
     redirect("/login");
   }
-  const res = await fetch(`${process.env.BETTER_AUTH_URL}/api/notes`, {
+  const res = await fetch(`${process.env.BETTER_AUTH_URL}/api/notes/len`, {
     cache: "no-store",
     headers: {
       cookie,
@@ -36,10 +35,7 @@ export default async function Home({
   });
 
   // explicitly type the JSON response
-  const result: InterfaceGetResult<Note[]> = await res.json();
-  const notes = result.ok ? result.data : [];
-  const selectedNoteId = searchParams.note;
-  const selectedNote = notes.find((n) => n.id === selectedNoteId);
+  const notesLen: { ok: boolean; data: number } = await res.json();
 
   return (
     <div className="flex flex-col h-screen">
@@ -52,7 +48,33 @@ export default async function Home({
             <ThemeToggle />
           </div>
           <div className="text-sm">
-            <ProfileMenu />
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <User style={{ width: "1.1rem", height: "1.1rem" }} />
+                </Button>
+              </DropdownMenuTrigger>
+
+              <DropdownMenuContent side="bottom" align="end" sideOffset={6}>
+                <div className="p-1 space-y-2 text-lg min-w-40">
+                  <DropdownMenuLabel className="text-base px-1">
+                    <div className="flex items-center gap-2 text-sm">
+                      <span className="text-gray-500 dark:text-gray-400">
+                        Username
+                      </span>
+                      <span className="px-2 py-0.5 rounded-md bg-black/5 dark:bg-white/10 font-medium">
+                        {session.user.name}
+                      </span>
+                    </div>
+                  </DropdownMenuLabel>
+                  {/* <DropdownMenuItem>Profile</DropdownMenuItem> */}
+                  <div className="bg-white/10 w-full h-px rounded-full my-3"></div>
+                  <DropdownMenuItem className="cursor-pointer red">
+                    <Logout />
+                  </DropdownMenuItem>
+                </div>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </header>
@@ -60,22 +82,19 @@ export default async function Home({
       <main className="md:grid grid-cols-3 flex overflow-hidden relative grow">
         <aside className="border-r p-4 flex flex-col w-full">
           <div className="flex justify-between items-center text-2xl p-2">
-            <h2 className="font-semibold mb-2 ">Your Notes ({notes.length})</h2>
+            <h2 className="font-semibold mb-2 ">
+              Your Notes ({notesLen.data})
+            </h2>
             <NewNoteDialog />
           </div>
           <Separator className="mb-4" />
-          <ScrollArea
-            className="flex-1"
-            style={{
-              overflowX: "visible",
-            }}
-          >
-            <NoteList notes={notes} />
+          <ScrollArea className="flex-1">
+            <NoteList />
           </ScrollArea>
         </aside>
 
         <section className="absolute left-full w-full h-full transition-transform duration-300 ease-in-out col-span-2 md:p-6 md:sticky top-0 md:min-h-[calc(100vh-5rem)] NoteWrapper">
-          <MrNote selectedNote={selectedNote} />
+          <MrNote />
         </section>
       </main>
     </div>

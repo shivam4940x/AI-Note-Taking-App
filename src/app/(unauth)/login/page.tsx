@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { loginSchema, signupSchema } from "@/lib/schema/auth.zod";
+import { loginSchema, signupSchema } from "@/lib/validation/auth.zod";
 import { z } from "zod";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -70,9 +70,7 @@ export default function AuthForm() {
         }
 
         toast.success("Account created");
-
-        // ✅ Create default welcome note here
-        await fetch("/api/notes", {
+        await fetch("/api/notes/add", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -93,9 +91,13 @@ export default function AuthForm() {
 
       `.trim(),
           }),
-        });
-
-        router.push("/");
+        })
+          .catch((error) => {
+            console.error("Error creating welcome note:", error);
+          })
+          .finally(() => {
+            router.push("/");
+          });
         return;
       }
     } finally {

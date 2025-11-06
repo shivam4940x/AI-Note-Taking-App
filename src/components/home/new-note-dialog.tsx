@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
+import { useNoteStore } from "@/store/useNoteStore";
 // zod schema
 const NoteSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -22,6 +23,7 @@ export default function NewNoteDialog() {
   const [title, setTitle] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
+  const { addNewNote } = useNoteStore();
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
@@ -32,13 +34,7 @@ export default function NewNoteDialog() {
     }
 
     setError("");
-
-    await fetch("/api/notes/add", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(parsed.data),
-    });
-
+    await addNewNote(parsed.data);
     setTitle("");
     setOpen(false);
     router.refresh();

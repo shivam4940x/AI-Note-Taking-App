@@ -155,3 +155,6 @@ button {
 .animate-dropdown-in {
   animation: dropdown-in 0.15s ease forwards;
 }
+.custom-separator {
+  @apply  bg-black/10 dark:bg-white/10;
+}

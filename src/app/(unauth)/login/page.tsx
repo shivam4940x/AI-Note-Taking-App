@@ -16,7 +16,7 @@ type FormData = LoginForm | SignupForm;
 
 export default function AuthForm() {
   const [mode, setMode] = useState<"signin" | "signup">("signin");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   const {
@@ -107,13 +107,23 @@ export default function AuthForm() {
 
   useEffect(() => {
     const fetchData = async () => {
+      const toastId = toast.loading("Checking authentication...");
+
       const session = await authClient.getSession();
       if (session.data) {
+        toast.dismiss(toastId);
+        toast.success("Authenticated");
         router.push("/");
+        return;
       }
+
+      toast.dismiss(toastId);
+      setLoading(false);
     };
+
     fetchData();
   }, [router]);
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-neutral-900">
       <div className="w-full max-w-sm p-6 bg-neutral-800 rounded-lg shadow">

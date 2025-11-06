@@ -9,10 +9,17 @@ import MrNote from "@/components/home/MrNote";
 import ThemeToggle from "@/components/utils/ThemeToggle";
 import NewNoteDialog from "@/components/home/new-note-dialog";
 import { Separator } from "@/components/ui/separator";
-import { DropdownMenu, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+} from "@radix-ui/react-dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { User } from "lucide-react";
-import { DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+} from "@/components/ui/dropdown-menu";
 import { Logout } from "@/components/utils/Logout";
 
 export default async function Home() {
@@ -56,17 +63,29 @@ export default async function Home() {
               </DropdownMenuTrigger>
 
               <DropdownMenuContent side="bottom" align="end" sideOffset={6}>
-                <div className="p-1 space-y-2 text-lg min-w-40">
-                  <DropdownMenuLabel className="text-base px-1">
-                    <div className="flex items-center gap-2 text-sm">
-                      <span className="text-gray-500 dark:text-gray-400">
-                        Username
-                      </span>
-                      <span className="px-2 py-0.5 rounded-md bg-black/5 dark:bg-white/10 font-medium">
-                        {session.user.name}
-                      </span>
-                    </div>
-                  </DropdownMenuLabel>
+                <div className="p-1 text-lg min-w-40">
+                  {[
+                    { label: "Username", value: session.user.name },
+                    { label: "Email", value: session.user.email },
+                    {
+                      label: "Email Verified",
+                      value: session.user.emailVerified ? "Yes" : "No",
+                    },
+                    {
+                      label: "Created At",
+                      value: session.user.createdAt?.toLocaleDateString(),
+                    },
+                  ].map(({ label, value }) => (
+                    <DropdownMenuLabel key={label} className="text-base px-1">
+                      <div className="flex items-center gap-2 text-sm">
+                        <span className="text-gray-500 dark:text-gray-400">
+                          {label}:
+                        </span>
+                        {value}
+                      </div>
+                    </DropdownMenuLabel>
+                  ))}
+
                   {/* <DropdownMenuItem>Profile</DropdownMenuItem> */}
                   <div className="bg-white/10 w-full h-px rounded-full my-3"></div>
                   <DropdownMenuItem className="cursor-pointer red p-0">

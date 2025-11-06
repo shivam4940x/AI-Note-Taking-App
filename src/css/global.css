@@ -155,6 +155,30 @@ button {
 .animate-dropdown-in {
   animation: dropdown-in 0.15s ease forwards;
 }
-.custom-separator {
-  @apply  bg-black/10 dark:bg-white/10;
+
+.overflow-x-scroll {
+  overflow-x: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.overflow-x-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.overflow-y-scroll {
+  overflow-y: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.overflow-y-scroll::-webkit-scrollbar {
+  display: none;
+}
+.overflow-scroll {
+  overflow: scroll;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+.overflow-scroll::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
 }

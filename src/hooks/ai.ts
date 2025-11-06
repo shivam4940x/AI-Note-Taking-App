@@ -52,10 +52,12 @@ export function useAiActions({
         successMessage: "Summarized",
         onResult: (output) =>
           setValue(
-            `<h4>Summary</h4>
-<p>${output.replace(/\n/g, "<br/>")}</p>
+            `
+<h4>Summary</h4>
+${output}
 <hr />
-${value}`
+${value}
+    `.trim()
           ),
       }),
 

@@ -69,7 +69,7 @@ export default async function Home() {
                   </DropdownMenuLabel>
                   {/* <DropdownMenuItem>Profile</DropdownMenuItem> */}
                   <div className="bg-white/10 w-full h-px rounded-full my-3"></div>
-                  <DropdownMenuItem className="cursor-pointer red">
+                  <DropdownMenuItem className="cursor-pointer red p-0">
                     <Logout />
                   </DropdownMenuItem>
                 </div>

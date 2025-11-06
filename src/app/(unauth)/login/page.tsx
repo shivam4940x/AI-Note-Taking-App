@@ -87,7 +87,7 @@ export default function AuthForm() {
   <li>Generate tags automatically</li>
 </ul>
 
-<p>Have fun exploring 🚀</p>
+<p>Go ahead, try summarizing this note yourself! 🚀</p>
 
       `.trim(),
           }),

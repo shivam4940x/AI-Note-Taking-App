@@ -7,20 +7,20 @@ export function getAIPrompt(
       return `
 You are rewriting notes for a personal knowledge base.
 
-Output Format (very important):
-- Use **plain Markdown only**.
-- No titles or headings unless already present.
-- Bullet points should use \`-\` or \`•\`.
-- No code blocks, no backticks, no surrounding quotes.
+Output Format (important):
+- Output **clean HTML only** (no Markdown).
+- Use <p> for paragraphs and <ul><li> for bullet points.
+- Do not wrap output in code fences or backticks.
+- Do not add CSS, inline styles, classes, or <html>/<body> tags.
 
 Task:
-Summarize the following text into clean, structured Markdown.
+Summarize the following text.
 
 Requirements:
-- Begin with 1 sentence stating the core topic.
-- Then list 3–5 key ideas using bullet points.
-- Then provide one short synthesis paragraph.
-- Keep the whole result under 200 words.
+- Start with one concise sentence introducing the main topic in a <p>.
+- Then provide 3–5 key ideas inside a <ul><li> list.
+- Then end with one short synthesis paragraph in <p>.
+- Entire result should stay under 200 words.
 
 Text to summarize:
 ${value}
@@ -30,19 +30,14 @@ ${value}
       return `
 You are refining notes for clarity and readability.
 
-Output Format (very important):
-- Return **polished Markdown only**.
+Output Format (important):
+- Return **clean HTML only** (no Markdown).
+- Preserve existing structure: keep headings, paragraphs, and lists.
 - Do not wrap output in code fences or backticks.
-- Preserve bullet lists, headings, and spacing exactly.
+- Do not add new content, interpretations, or remove meaning.
 
 Task:
-Rewrite the text below into clearer, smoother, and grammatically correct Markdown.
-
-Requirements:
-- Fix grammar and sentence flow naturally.
-- Preserve original meaning and factual content.
-- Keep lists as lists, sections as sections.
-- Do not add new information or remove meaning.
+Rewrite the text below to be clearer and smoother while preserving intent.
 
 Raw text to improve:
 ${value}
@@ -50,19 +45,14 @@ ${value}
 
     case "tags":
       return `
-Analyze the text and produce a list of topic tags.
+Analyze the text and produce topic tags.
 
-Output Format (very important):
-- Return **only** a single comma-separated line.
-- No explanations, no sentences, no markdown, no quotes.
+Output Format (important):
+- Output only a single **comma-separated** line (e.g., tag1, tag2, tag3).
+- No HTML, no explanations, no sentences, no quotes.
 
 Task:
-Generate 8–12 short tags representing the key themes of the text.
-
-Requirements:
-- Tags should be one or two words each.
-- No duplicates.
-- Tags should be relevant and specific.
+Generate 8–12 short tags capturing the main themes.
 
 Text for analysis:
 ${value}

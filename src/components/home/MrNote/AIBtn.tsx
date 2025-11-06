@@ -43,21 +43,30 @@ export default function AiBtn({
           <Button
             variant="ghost"
             className="w-full rounded-none justify-start px-2"
-            onClick={AI.onSummary}
+            onClick={() => {
+              setOpen(false);
+              AI.onSummary();
+            }}
           >
             AI Summary
           </Button>
           <Button
             variant="ghost"
             className="w-full rounded-none justify-start px-2"
-            onClick={AI.onImprove}
+            onClick={() => {
+              setOpen(false);
+              AI.onImprove();
+            }}
           >
             AI Improve
           </Button>
           <Button
             variant="ghost"
             className="w-full rounded-none justify-start px-2"
-            onClick={AI.onTags}
+            onClick={() => {
+              setOpen(false);
+              AI.onTags();
+            }}
           >
             AI Tags
           </Button>

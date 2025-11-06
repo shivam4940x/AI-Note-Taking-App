@@ -11,7 +11,7 @@ export default function NoteList() {
   const router = useRouter();
   const params = useSearchParams();
   const selected = params.get("note");
-  const { notes, fetchNotes, setSelectedNoteId, hasMore } = useNoteStore();
+  const { notes, fetchNotes, setSelectedNote, hasMore } = useNoteStore();
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
 
@@ -28,9 +28,10 @@ export default function NoteList() {
   // Sync selected note without refetching
   useEffect(() => {
     if (selected) {
-      setSelectedNoteId(selected);
+      const note = notes.find((n) => n.id === selected) || null;
+      setSelectedNote(note);
     }
-  }, [selected, setSelectedNoteId]);
+  }, [selected, setSelectedNote, notes]);
 
   if (loading && notes.length === 0) {
     return (
@@ -48,7 +49,7 @@ export default function NoteList() {
           <li key={note.id}>
             <Card
               onClick={() => {
-                setSelectedNoteId(note.id);
+                setSelectedNote(note);
                 router.push(`/?note=${note.id}`);
               }}
               className={`cursor-pointer hover:bg-accent transition py-4  

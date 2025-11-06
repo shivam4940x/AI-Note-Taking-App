@@ -18,8 +18,7 @@ import { useAiActions } from "@/hooks/ai";
 export default function MrNote() {
   const [editing, setEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { updateNote, notes, selectedNoteId, deleteNote } = useNoteStore();
-  const selectedNote = notes.find((n) => n.id === selectedNoteId);
+  const { updateNote, selectedNote, deleteNote, setSelectedNote } = useNoteStore();
   const [value, setValue] = useState(selectedNote?.content ?? "");
   const [title, setTitle] = useState(selectedNote?.title ?? "");
   const router = useRouter();
@@ -81,14 +80,14 @@ export default function MrNote() {
       setValue(selectedNote?.content ?? "");
       setTitle(selectedNote?.title ?? "");
     }
-  }, [selectedNote, editing, selectedNoteId]);
+  }, [selectedNote, editing]);
   useEffect(() => {
     if (!selectedNote) return;
     const contentChanged = value !== (selectedNote.content ?? "");
     const titleChanged = title !== (selectedNote.title ?? "");
 
     setIsChanged(contentChanged || titleChanged);
-  }, [value, title, selectedNote, selectedNoteId]);
+  }, [value, title, selectedNote]);
 
   useEffect(() => {
     if (!isSmol) return;
@@ -99,7 +98,8 @@ export default function MrNote() {
     if (NoteWrapper && selectedNote) {
       NoteWrapper.style.transform = "translateX(-100%)";
     }
-  }, [selectedNote, NoteWrapper, isSmol, selectedNoteId]);
+  }, [selectedNote, NoteWrapper, isSmol]);
+
   useEffect(() => {
     const handleResize = () => {
       setIsSmol(window.innerWidth < 768);
@@ -112,7 +112,7 @@ export default function MrNote() {
   }, []);
   if (!selectedNote) {
     return (
-      <Card>
+      <Card className="rounded-none h-full">
         <CardHeader>
           <CardTitle>No note selected</CardTitle>
         </CardHeader>
@@ -130,14 +130,9 @@ export default function MrNote() {
             onClick={() => {
               if (NoteWrapper) {
                 NoteWrapper.style.transform = "translateX(0%)";
-                NoteWrapper.addEventListener(
-                  "transitionend",
-                  () => {
-                    router.push("/");
-                  },
-                  { once: true }
-                );
+                router.push("/");
               }
+              setSelectedNote(null)
             }}
           >
             <ArrowLeft />

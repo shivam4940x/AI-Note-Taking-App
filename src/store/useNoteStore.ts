@@ -7,8 +7,8 @@ interface NoteStore {
   setNotes: (notes: Note[]) => void;
   hasMore: boolean;
 
-  selectedNoteId: string | null;
-  setSelectedNoteId: (id: string | null) => void;
+  selectedNote: Note | null;
+  setSelectedNote: (note: Note | null) => void;
   currentPage: number;
   fetchNotes: (opts?: {
     page?: number;
@@ -28,8 +28,8 @@ export const useNoteStore = create<NoteStore>((set, get) => ({
   setNotes: (notes) => set({ notes }),
   hasMore: true,
 
-  selectedNoteId: null,
-  setSelectedNoteId: (id) => set({ selectedNoteId: id }),
+  selectedNote: null,
+  setSelectedNote: (note) => set({ selectedNote: note }),
   currentPage: 0,
   fetchNotes: async (opts = {}) => {
     const { page = 1, limit = 10 } = opts;

@@ -12,18 +12,25 @@ export default function NoteList() {
   const params = useSearchParams();
   const selected = params.get("note");
   const { notes, fetchNotes, setSelectedNoteId, hasMore } = useNoteStore();
-  const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
 
+  // Fetch only when page changes
   useEffect(() => {
     const load = async () => {
       setLoading(true);
       await fetchNotes({ page });
       setLoading(false);
-      if (selected) setSelectedNoteId(selected);
     };
     load();
-  }, [page, selected, setSelectedNoteId, fetchNotes]);
+  }, [page, fetchNotes]);
+
+  // Sync selected note without refetching
+  useEffect(() => {
+    if (selected) {
+      setSelectedNoteId(selected);
+    }
+  }, [selected, setSelectedNoteId]);
 
   if (loading && notes.length === 0) {
     return (
@@ -38,7 +45,7 @@ export default function NoteList() {
     <div>
       <ul className="space-y-2 group p-4">
         {notes.map((note) => (
-          <li key={note.id} className="note transition-transform">
+          <li key={note.id}>
             <Card
               onClick={() => {
                 setSelectedNoteId(note.id);
@@ -56,11 +63,9 @@ export default function NoteList() {
       </ul>
 
       <Button
-        variant={"ghost"}
-        disabled={!hasMore}
-        onClick={() => {
-          setPage((p) => p + 1);
-        }}
+        variant="ghost"
+        disabled={!hasMore || loading}
+        onClick={() => setPage((p) => p + 1)}
         className="w-full"
       >
         {loading ? <Loading /> : hasMore ? "Show more" : "No more notes"}

@@ -113,7 +113,7 @@ AI functionality is implemented with Google GenAI:
 
 Deploy frontend + backend on **Vercel**
 
-Live Demo: https://your-vercel-app-url.vercel.app
+Live Demo: https://ai-note-taking-app-rho.vercel.app/
 
 ---
 

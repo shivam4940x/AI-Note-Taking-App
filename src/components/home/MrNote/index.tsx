@@ -180,7 +180,14 @@ export default function MrNote() {
               className="bg-gray-600/10"
             >
               {" "}
-              {isLoading ? <Loading /> : <CheckCircle />}{" "}
+              {isLoading ? (
+                <Loading />
+              ) : (
+                <>
+                  Save
+                  <CheckCircle />
+                </>
+              )}
             </Button>
             <AiBtn isLoading={isLoading} AI={AI} />{" "}
           </div>

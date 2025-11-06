@@ -5,21 +5,25 @@ import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNoteStore } from "@/store/useNoteStore";
 import { useEffect, useState } from "react";
 import Loading from "../utils/loading";
+import { Button } from "../ui/button";
 
 export default function NoteList() {
   const router = useRouter();
   const params = useSearchParams();
   const selected = params.get("note");
-  const { notes, fetchNotes, setSelectedNoteId } = useNoteStore();
+  const { notes, fetchNotes, setSelectedNoteId, hasMore } = useNoteStore();
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+
   useEffect(() => {
     const load = async () => {
-      await fetchNotes();
+      await fetchNotes({ page });
       setLoading(false);
       if (selected) setSelectedNoteId(selected);
     };
     load();
-  }, [fetchNotes, selected, setSelectedNoteId]);
+  }, [page, selected, setSelectedNoteId, fetchNotes]);
+
   if (loading) {
     return (
       <div className="flex gap-2 justify-center items-center">
@@ -28,24 +32,36 @@ export default function NoteList() {
       </div>
     );
   }
+
   return (
-    <ul className="space-y-2 group px-6 py-4">
-      {notes.map((note) => (
-        <li key={note.id} className="note transition-transform">
-          <Card
-            onClick={() => {
-              setSelectedNoteId(note.id);
-              router.push(`/?note=${note.id}`);
-            }}
-            className={`cursor-pointer hover:bg-accent transition py-4  
-              ${selected === note.id ? "border border-primary" : ""}`}
-          >
-            <CardHeader className="flex items-center">
-              <CardTitle className="text-sm">{note.title}</CardTitle>
-            </CardHeader>
-          </Card>
-        </li>
-      ))}
-    </ul>
+    <div>
+      <ul className="space-y-2 group px-6 py-4">
+        {notes.map((note) => (
+          <li key={note.id} className="note transition-transform">
+            <Card
+              onClick={() => {
+                setSelectedNoteId(note.id);
+                router.push(`/?note=${note.id}`);
+              }}
+              className={`cursor-pointer hover:bg-accent transition py-4  
+                ${selected === note.id ? "border border-primary" : ""}`}
+            >
+              <CardHeader className="flex items-center">
+                <CardTitle className="text-sm">{note.title}</CardTitle>
+              </CardHeader>
+            </Card>
+          </li>
+        ))}
+      </ul>
+
+      <Button
+        variant={"ghost"}
+        disabled={!hasMore}
+        onClick={() => setPage((p) => p + 1)}
+        className="w-full"
+      >
+        {hasMore ? "Show more" : "No more notes"}
+      </Button>
+    </div>
   );
 }

@@ -34,15 +34,8 @@ export default async function Home() {
   if (!session || !session.user) {
     redirect("/login");
   }
-  const res = await fetch(`${process.env.BETTER_AUTH_URL}/api/notes/len`, {
-    cache: "no-store",
-    headers: {
-      cookie,
-    },
-  });
 
   // explicitly type the JSON response
-  const notesLen: { ok: boolean; data: number } = await res.json();
 
   return (
     <div className="flex flex-col h-screen">
@@ -99,20 +92,18 @@ export default async function Home() {
       </header>
 
       <main className="md:grid grid-cols-3 flex overflow-hidden relative grow">
-        <aside className="border-r p-4 flex flex-col w-full">
+        <aside className="border-r p-4 flex flex-col w-full h-full overflow-scroll">
           <div className="flex justify-between items-center text-2xl p-2">
-            <h2 className="font-semibold mb-2 ">
-              Your Notes ({notesLen.data})
-            </h2>
+            <h2 className="font-semibold mb-2 ">Your Notes</h2>
             <NewNoteDialog />
           </div>
-          <Separator className="mb-4" />
+          <Separator className="my-2" />
           <ScrollArea className="flex-1">
             <NoteList />
           </ScrollArea>
         </aside>
 
-        <section className="absolute left-full w-full h-full transition-transform duration-300 ease-in-out col-span-2 md:p-6 md:sticky top-0 md:min-h-[calc(100vh-5rem)] NoteWrapper">
+        <section className="absolute left-full w-full h-full transition-transform duration-300 ease-in-out col-span-2 md:p-6 md:sticky top-0 md:min-h-[calc(100vh-5rem)] md:h-max NoteWrapper">
           <MrNote />
         </section>
       </main>

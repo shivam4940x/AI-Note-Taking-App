@@ -23,6 +23,7 @@ export default function NewNoteDialog() {
   const [title, setTitle] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
   const { addNewNote } = useNoteStore();
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -33,10 +34,13 @@ export default function NewNoteDialog() {
       return;
     }
 
+    
     setError("");
+    setIsLoading(true);
     await addNewNote(parsed.data);
     setTitle("");
     setOpen(false);
+    setIsLoading(false);
     router.refresh();
   }
 
@@ -61,7 +65,7 @@ export default function NewNoteDialog() {
             onChange={(e) => setTitle(e.target.value)}
           />
 
-          <Button type="submit" className="w-full">
+          <Button disabled={isLoading} type="submit" className="w-full">
             Save Note
           </Button>
         </form>

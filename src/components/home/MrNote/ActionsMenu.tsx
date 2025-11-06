@@ -121,8 +121,8 @@ export function SmolActionsMenu({
             className={itemBase}
           >
             <span className="inline-flex items-center gap-2">
-              <CheckCircle className="h-4 w-4" />
               Save
+              <CheckCircle className="h-4 w-4" />
             </span>
           </button>
 

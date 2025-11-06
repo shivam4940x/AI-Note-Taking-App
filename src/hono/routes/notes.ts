@@ -41,8 +41,8 @@ Notes.post("/add", async (c) => {
   const user = c.get("user");
   if (!user) return c.json({ error: "Unauthorized" }, 401);
 
-  const { title } = await c.req.json();
-  const result = await createNote(user.id, title);
+  const { title, content } = await c.req.json();
+  const result = await createNote(user.id, title, content);
 
   if (!result.ok) return c.json({ error: result.error }, 500);
   return c.json({ success: true, note: result.note }, 201);

@@ -125,3 +125,33 @@ button {
   @apply bg-[#FF0000]/10 text-[#FF0000]/80 transition-colors hover:bg-[#FF0000]/10;
 }
 
+@keyframes gradient-move {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-move 3s ease infinite;
+}
+@keyframes dropdown-in {
+  0% {
+    opacity: 0;
+    transform: translateY(4px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0px) scale(1);
+  }
+}
+
+.animate-dropdown-in {
+  animation: dropdown-in 0.15s ease forwards;
+}

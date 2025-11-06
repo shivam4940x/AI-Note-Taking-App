@@ -13,6 +13,10 @@ const ThemeToggle = () => {
       document.documentElement.classList.add("dark");
       setDark(true);
     }
+    if (stored === "light") {
+      document.documentElement.classList.remove("dark");
+      setDark(false);
+    }
   }, []);
 
   const toggle = () => {
@@ -33,10 +37,12 @@ const ThemeToggle = () => {
   const Icon = dark ? Sun : Moon;
   return (
     <Button onClick={toggle} variant="ghost" size="icon">
-      <Icon style={{
-        width:"1.1rem",
-        height:"1.1rem"
-      }} />
+      <Icon
+        style={{
+          width: "1.1rem",
+          height: "1.1rem",
+        }}
+      />
     </Button>
   );
 };

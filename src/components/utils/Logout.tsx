@@ -8,7 +8,8 @@ export const Logout = () => {
     <div
       onClick={async () => {
         await authClient.signOut();
-        router.push("/");
+        router.refresh();
+        router.push("/login");
       }}
     >
       Logout

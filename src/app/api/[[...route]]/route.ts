@@ -4,8 +4,12 @@ import { cors } from "hono/cors";
 import { auth } from "@/lib/auth";
 import { session } from "@/hono/middlewares/global";
 import Notes from "@/hono/routes/notes";
+import Gemeni from "@/hono/routes/ai.gemeni";
 
-const routes = [{ path: "/notes", router: Notes }];
+const routes = [
+  { path: "/notes", router: Notes },
+  { path: "/gemeni", router: Gemeni },
+];
 
 const app = new Hono<{
   Variables: {

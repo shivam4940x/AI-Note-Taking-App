@@ -2,10 +2,10 @@ import { Note, Prisma } from "@/generated";
 import prisma from "@/prisma/main.prisma";
 import { InterfaceGetResult } from "@/types/crud.interfaces";
 
-export async function createNote(userId: string, title: string) {
+export async function createNote(userId: string, title: string, content = "") {
   try {
     const note = await prisma.note.create({
-      data: { title, content: "", userId },
+      data: { title, content, userId },
     });
     return { ok: true, note };
   } catch (err) {

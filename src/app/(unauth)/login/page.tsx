@@ -70,6 +70,31 @@ export default function AuthForm() {
         }
 
         toast.success("Account created");
+
+        // ✅ Create default welcome note here
+        await fetch("/api/notes", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            title: "Welcome 👋",
+            content: `
+<h2>Welcome to your notes! 👋</h2>
+
+<p>Here are a few things you can try:</p>
+
+<ul>
+  <li>Write your thoughts</li>
+  <li>Organize notes and ideas</li>
+  <li>Use AI to summarize or improve content</li>
+  <li>Generate tags automatically</li>
+</ul>
+
+<p>Have fun exploring 🚀</p>
+
+      `.trim(),
+          }),
+        });
+
         router.push("/");
         return;
       }

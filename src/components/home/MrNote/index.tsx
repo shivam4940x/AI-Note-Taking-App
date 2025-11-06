@@ -2,15 +2,18 @@
 
 import { useEffect, useState } from "react";
 import { Note } from "@/generated";
-import { Button } from "../ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import RichTextEditor from "../RichEditor";
-import { Input } from "../ui/input";
-import { Separator } from "../ui/separator";
+import { Button } from "../../ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card";
+import RichTextEditor from "../../RichEditor";
+import { Input } from "../../ui/input";
+import { Separator } from "../../ui/separator";
 import { toast } from "sonner";
-import Loading from "../utils/loading";
+import Loading from "../../utils/loading";
 import { ArrowLeft, CheckCircle, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
+import AiBtn from "./AIBtn";
+import { callAI } from "../../utils/fetch/ai";
+import { getAIPrompt } from "../../../lib/ai.prompt";
 
 export default function MrNote({
   selectedNote,
@@ -23,16 +26,28 @@ export default function MrNote({
   const [title, setTitle] = useState(selectedNote?.title ?? "");
   const router = useRouter();
   const [NoteWrapper, setNoteWrapper] = useState<HTMLDivElement | null>(null);
-  const [isSmol, setIsSmol] = useState(false);
+  const [isSmol, setIsSmol] = useState(true);
+  const [isChanged, setIsChanged] = useState(false);
+  useEffect(() => {
+    if (!selectedNote) return;
+
+    const contentChanged = value !== (selectedNote.content ?? "");
+    const titleChanged = title !== (selectedNote.title ?? "");
+
+    setIsChanged(contentChanged || titleChanged);
+  }, [value, title, selectedNote]);
+
   useEffect(() => {
     const handleResize = () => {
       setIsSmol(window.innerWidth < 768);
     };
+    setIsSmol(window.innerWidth < 768);
     window.addEventListener("resize", handleResize);
     return () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+
   useEffect(() => {
     if (!isSmol) return;
     if (!NoteWrapper) {
@@ -43,6 +58,7 @@ export default function MrNote({
       NoteWrapper.style.transform = "translateX(-100%)";
     }
   }, [selectedNote, NoteWrapper, isSmol]);
+
   async function handleSave() {
     if (!selectedNote) return;
     if (title.trim() == "") {
@@ -73,7 +89,6 @@ export default function MrNote({
     if (!selectedNote) return;
 
     setIsLoading(true);
-
     try {
       toast.promise(
         fetch(`/api/notes/${selectedNote.id}`, {
@@ -86,16 +101,59 @@ export default function MrNote({
         }
       );
       router.refresh();
+      router.refresh();
+      router.push("/");
+      if (isSmol && NoteWrapper) {
+        NoteWrapper.style.transform = "translateX(0%)";
+      }
     } finally {
       setIsLoading(false);
     }
   }
+  const AiFeatures = {
+    onSummary: async () =>
+      callAI({
+        value,
+        prompt: getAIPrompt("summary", value),
+        successMessage: "Summarized",
+        toast,
+        setIsLoading,
+        onResult: (output) => setValue(output),
+      }),
+
+    onImprove: async () =>
+      callAI({
+        value,
+        prompt: getAIPrompt("improve", value),
+        successMessage: "Improved",
+        toast,
+        setIsLoading,
+        onResult: (output) => setValue(output),
+      }),
+
+    onTags: async () =>
+      callAI({
+        value,
+        prompt: getAIPrompt("tags", value),
+        successMessage: "Tags added",
+        toast,
+        setIsLoading,
+        onResult: (output) => {
+          const tags = output
+            .split(",")
+            .map((t) => t.trim())
+            .filter(Boolean);
+          setTitle((prev) => `${prev}  #${tags.join(" #")}`);
+        },
+      }),
+  };
 
   useEffect(() => {
-    setValue(selectedNote?.content ?? "");
-    setTitle(selectedNote?.title ?? "");
-    setEditing(false);
-  }, [selectedNote]);
+    if (!editing) {
+      setValue(selectedNote?.content ?? "");
+      setTitle(selectedNote?.title ?? "");
+    }
+  }, [selectedNote, editing]);
 
   if (!selectedNote) {
     return (
@@ -140,7 +198,7 @@ export default function MrNote({
 
         <div className="flex gap-2 justify-center items-center flex-row-reverse">
           <Button
-            disabled={isLoading}
+            disabled={isLoading || !isChanged}
             variant="ghost"
             size="lg"
             onClick={handleSave}
@@ -148,6 +206,7 @@ export default function MrNote({
           >
             {isLoading ? <Loading /> : <CheckCircle />}
           </Button>
+          <AiBtn isLoading={isLoading} {...AiFeatures} />
 
           <Button
             disabled={isLoading}

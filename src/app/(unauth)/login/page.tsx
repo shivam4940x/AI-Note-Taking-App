@@ -109,7 +109,7 @@ export default function AuthForm() {
     const fetchData = async () => {
       const session = await authClient.getSession();
       if (session.data) {
-        // router.push("/");
+        router.push("/");
       }
     };
     fetchData();

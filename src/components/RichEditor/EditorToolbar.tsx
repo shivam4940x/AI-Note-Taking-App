@@ -38,11 +38,11 @@ export function EditorToolbar({ editor }: Props) {
   // };
 
   return (
-    <div className="flex flex-wrap items-center gap-2">
+    <div className="flex flex-wrap md:flex-row items-center gap-2 w-full h-max">
       {/* Text Styles */}
       <ToggleGroup
         type="multiple"
-        className="border"
+        className="border flex flex-col md:flex-row"
         value={[
           editor.isActive("bold") ? "bold" : "",
           editor.isActive("italic") ? "italic" : "",
@@ -76,7 +76,7 @@ export function EditorToolbar({ editor }: Props) {
           <ToggleGroupItem
             key={item.value}
             value={item.value}
-            className={"border-r last:border-0"}
+            className={"md:border-r last:border-0"}
           >
             {item.icon}
           </ToggleGroupItem>
@@ -85,7 +85,7 @@ export function EditorToolbar({ editor }: Props) {
 
       {/* Headings */}
       <ToggleGroup
-        className="border"
+        className="border flex flex-col md:flex-row"
         type="single"
         value={
           editor.isActive("heading", { level: 1 })
@@ -110,7 +110,7 @@ export function EditorToolbar({ editor }: Props) {
           const Icon = [Heading1, Heading2, Heading3, Heading4][i];
           return (
             <ToggleGroupItem
-              className="border-r last:border-0"
+              className="md:border-r last:border-0"
               key={level}
               value={`h${level}`}
             >
@@ -123,7 +123,7 @@ export function EditorToolbar({ editor }: Props) {
       {/* Lists */}
       <ToggleGroup
         type="multiple"
-        className="border"
+        className="border flex flex-col md:flex-row"
         value={[
           editor.isActive("bulletList") ? "bullet" : "",
           editor.isActive("orderedList") ? "ordered" : "",
@@ -151,7 +151,7 @@ export function EditorToolbar({ editor }: Props) {
           <ToggleGroupItem
             key={value}
             value={value}
-            className={"border-r last:border-0"}
+            className={"md:border-r last:border-0"}
           >
             {icon}
           </ToggleGroupItem>
@@ -161,7 +161,7 @@ export function EditorToolbar({ editor }: Props) {
       {/* Sub/Super */}
       <ToggleGroup
         type="multiple"
-        className="border"
+        className="border flex flex-col md:flex-row"
         value={[
           editor.isActive("subscript") ? "sub" : "",
           editor.isActive("superscript") ? "sup" : "",
@@ -180,11 +180,11 @@ export function EditorToolbar({ editor }: Props) {
           }
         }}
       >
-        <ToggleGroupItem value="sub" className={"border-r last:border-0"}>
+        <ToggleGroupItem value="sub" className={"md:border-r last:border-0"}>
           <Subscript />
         </ToggleGroupItem>
 
-        <ToggleGroupItem value="sup" className={"border-r last:border-0"}>
+        <ToggleGroupItem value="sup" className={"md:border-r last:border-0"}>
           <Superscript />
         </ToggleGroupItem>
       </ToggleGroup>
@@ -192,7 +192,7 @@ export function EditorToolbar({ editor }: Props) {
       {/* Alignment */}
       <ToggleGroup
         type="single"
-        className="border"
+        className="border flex flex-col md:flex-row"
         value={
           editor.isActive({ textAlign: "left" })
             ? "left"
@@ -207,15 +207,15 @@ export function EditorToolbar({ editor }: Props) {
           editor.chain().focus().setTextAlign(value).run();
         }}
       >
-        <ToggleGroupItem className={"border-r last:border-0"} value="left">
+        <ToggleGroupItem className={"md:border-r last:border-0"} value="left">
           <AlignLeft />
         </ToggleGroupItem>
 
-        <ToggleGroupItem className={"border-r last:border-0"} value="center">
+        <ToggleGroupItem className={"md:border-r last:border-0"} value="center">
           <AlignCenter />
         </ToggleGroupItem>
 
-        <ToggleGroupItem className={"border-r last:border-0"} value="right">
+        <ToggleGroupItem className={"md:border-r last:border-0"} value="right">
           <AlignRight />
         </ToggleGroupItem>
       </ToggleGroup>
@@ -257,7 +257,7 @@ export function EditorToolbar({ editor }: Props) {
       </div> */}
 
       {/* Extra */}
-      <div className="flex border rounded-md overflow-hidden">
+      <div className="flex border rounded-md overflow-hidden flex-col md:flex-row">
         {[
           { icon: <Undo />, action: () => editor.chain().focus().undo().run() },
           { icon: <Redo />, action: () => editor.chain().focus().redo().run() },
@@ -281,7 +281,7 @@ export function EditorToolbar({ editor }: Props) {
             size="icon"
             variant={item.active ? "default" : "ghost"}
             onClick={item.action}
-            className="rounded-none border-r last:border-0"
+            className="rounded-none md:border-r last:border-0"
           >
             {item.icon}
           </Button>

@@ -42,12 +42,9 @@ export default async function Home({
   const selectedNote = notes.find((n) => n.id === selectedNoteId);
 
   return (
-    <>
-      <header className="border-b p-4 grid grid-cols-3">
-        <div className="pr-3">
-          {/* <h1 className="text-2xl font-semibold">
-            Welcome, {session.user.name}!
-          </h1> */}
+    <div className="flex flex-col h-screen">
+      <header className="border-b p-4 flex md:grid grid-cols-3">
+        <div className="pr-3 grow">
           <SearchWithSuggestions />
         </div>
         <div className="col-span-2 flex justify-end items-center gap-2">
@@ -60,8 +57,8 @@ export default async function Home({
         </div>
       </header>
 
-      <main className="grid grid-cols-3">
-        <aside className="border-r p-4 flex flex-col ">
+      <main className="md:grid grid-cols-3 flex overflow-hidden relative grow">
+        <aside className="border-r p-4 flex flex-col w-full">
           <div className="flex justify-between items-center text-2xl p-2">
             <h2 className="font-semibold mb-2 ">Your Notes ({notes.length})</h2>
             <NewNoteDialog />
@@ -77,10 +74,10 @@ export default async function Home({
           </ScrollArea>
         </aside>
 
-        <section className="col-span-2 p-6 sticky top-0 min-h-[calc(100vh-5rem)]">
+        <section className="absolute left-full w-full h-full transition-transform duration-300 ease-in-out col-span-2 md:p-6 md:sticky top-0 md:min-h-[calc(100vh-5rem)] NoteWrapper">
           <MrNote selectedNote={selectedNote} />
         </section>
       </main>
-    </>
+    </div>
   );
 }

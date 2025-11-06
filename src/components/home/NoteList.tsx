@@ -15,7 +15,7 @@ export default function NoteList({ notes }: { notes: Note[] }) {
         <li key={note.id} className="note transition-transform">
           <Card
             onClick={() => router.push(`/?note=${note.id}`)}
-            className={`cursor-pointer hover:bg-accent transition  
+            className={`cursor-pointer hover:bg-accent transition py-4  
               ${selected === note.id ? "border border-primary" : ""}`}
           >
             <CardHeader>

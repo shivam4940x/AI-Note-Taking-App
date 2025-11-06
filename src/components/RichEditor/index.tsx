@@ -81,12 +81,12 @@ export default function RichTextEditor({
   if (!editor) return null;
 
   return (
-    <Card className="rounded-md p-0 shadow-none border-0 gap-0">
-      <CardHeader className="p-2">
+    <Card className="rounded-md p-0 shadow-none border-0 gap-2 md:gap-0 min-h-full md:min-h-0 flex flex-row md:flex-col">
+      <CardHeader className="md:p-2 p-0 w-12 md:w-full">
         <EditorToolbar editor={editor} />
       </CardHeader>
-      <Separator />
-      <CardContent className="px-2">
+      <Separator className="hidden md:block" />
+      <CardContent className="md:px-2 grow">
         {/* <Separator className="mb-2" /> */}
         <EditorContent
           editor={editor}

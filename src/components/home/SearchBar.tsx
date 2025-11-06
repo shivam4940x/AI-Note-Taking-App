@@ -11,13 +11,14 @@ import {
 } from "@/components/ui/command";
 import { Note } from "@/generated";
 import Loading from "../utils/loading";
+import { useRouter } from "next/navigation";
 
 export default function SearchWithSuggestions() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<Note[]>([]);
   const [loading, setLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false); // <<< key change
-
+  const route = useRouter();
   useEffect(() => {
     if (!query) {
       setResults([]);
@@ -65,7 +66,11 @@ export default function SearchWithSuggestions() {
                 {results.map((note) => (
                   <CommandItem
                     key={note.id}
-                    onSelect={() => setQuery(note.title)}
+                    onSelect={() => {
+                      route.push(`/?note=${note.id}`);
+                      setQuery("");
+                      route.refresh();
+                    }}
                   >
                     {note.title}
                   </CommandItem>

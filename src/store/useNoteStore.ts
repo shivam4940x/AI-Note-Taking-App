@@ -1,88 +1,90 @@
 import { create } from "zustand";
-import { Note } from "@/generated";
-import { InterfaceGet, InterfaceGetError } from "@/types/crud.interfaces";
+
+const STORAGE_KEY = "notes";
+export type Note = {
+  id: string;
+  title: string;
+  content: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+const loadNotes = (): Note[] => {
+  if (typeof window === "undefined") return [];
+  return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+};
+
+const saveNotes = (notes: Note[]) => {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
+};
 
 interface NoteStore {
   notes: Note[];
-  setNotes: (notes: Note[]) => void;
-  hasMore: boolean;
-
   selectedNote: Note | null;
+
+  setNotes: (notes: Note[]) => void;
   setSelectedNote: (note: Note | null) => void;
-  currentPage: number;
-  fetchNotes: (opts?: {
-    page?: number;
-    limit?: number;
-    query?: string;
-  }) => Promise<void>;
 
-  forceFetch: () => Promise<void>;
-
-  updateNote: (id: string, data: Partial<Note>) => Promise<void>;
-  deleteNote: (id: string) => Promise<void>;
-  addNewNote: (data: { title: string; content?: string }) => Promise<void>;
+  fetchNotes: () => void;
+  addNewNote: (data: { title: string; content?: string }) => void;
+  updateNote: (id: string, data: Partial<Note>) => void;
+  deleteNote: (id: string) => void;
 }
 
 export const useNoteStore = create<NoteStore>((set, get) => ({
   notes: [],
-  setNotes: (notes) => set({ notes }),
-  hasMore: true,
-
   selectedNote: null,
+
+  setNotes: (notes) => {
+    saveNotes(notes);
+    set({ notes });
+  },
+
   setSelectedNote: (note) => set({ selectedNote: note }),
-  currentPage: 0,
-  fetchNotes: async (opts = {}) => {
-    const { page = 1, limit = 10 } = opts;
-    if (page <= get().currentPage) return;
-    const res = await fetch(`/api/notes?page=${page}&limit=${limit}`, {
-      cache: "no-store",
-    });
 
-    const result: InterfaceGet<Note[]> | InterfaceGetError = await res.json();
-    if (!result.ok) return;
-    const newNotes = result.data as Note[];
+  fetchNotes: () => {
+    let notes = loadNotes();
 
-    set((state) => ({
-      notes: page === 1 ? result.data : [...state.notes, ...result.data],
-      hasMore: newNotes.length === limit,
-      currentPage: page,
-    }));
+    if (notes.length === 0) {
+      const welcome: Note = {
+        id: crypto.randomUUID(),
+        title: "Welcome 👋",
+        content: `<h2>Welcome to your notes!</h2><p>Start writing 🚀</p>`,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      notes = [welcome];
+      saveNotes(notes);
+    }
+
+    set({ notes });
   },
 
-  forceFetch: async () => {
-    const res = await fetch(`/api/notes?page=${1}&limit=${10}`, {
-      cache: "no-store",
-    });
-    const result: InterfaceGet<Note[]> | InterfaceGetError = await res.json();
-    if (result.ok) set({ notes: result.data as Note[] });
-  },
-  addNewNote: async (data: { title: string; content?: string }) => {
-    await fetch("/api/notes/add", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-    get().forceFetch();
-  },
-  updateNote: async (id: string, data: Partial<Note>) => {
-    await fetch(`/api/notes/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
+  addNewNote: ({ title, content = "" }) => {
+    const newNote: Note = {
+      id: crypto.randomUUID(),
+      title,
+      content,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
 
-    set((state) => ({
-      notes: state.notes.map((note) =>
-        note.id === id ? { ...note, ...data } : note
-      ),
-    }));
+    const notes = [newNote, ...get().notes];
+    saveNotes(notes);
+    set({ notes, selectedNote: newNote });
   },
-  deleteNote: async (id: string) => {
-    await fetch(`/api/notes/${id}`, {
-      method: "DELETE",
-    });
-    set((state) => ({
-      notes: state.notes.filter((note) => note.id !== id),
-    }));
+
+  updateNote: (id, data) => {
+    const notes = get().notes.map((n) =>
+      n.id === id ? { ...n, ...data, updatedAt: new Date() } : n
+    );
+    saveNotes(notes);
+    set({ notes });
+  },
+
+  deleteNote: (id) => {
+    const notes = get().notes.filter((n) => n.id !== id);
+    saveNotes(notes);
+    set({ notes, selectedNote: null });
   },
 }));

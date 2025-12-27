@@ -9,9 +9,10 @@ import {
   CommandGroup,
   CommandEmpty,
 } from "@/components/ui/command";
-import { Note } from "@/generated";
 import Loading from "../utils/loading";
 import { useRouter } from "next/navigation";
+import { getWelcomeNote, shouldCreateWelcomeNote } from "@/lib/welcomeNote";
+import { Note, useNoteStore } from "@/store/useNoteStore";
 
 export default function SearchWithSuggestions() {
   const [query, setQuery] = useState("");
@@ -25,7 +26,11 @@ export default function SearchWithSuggestions() {
       setHasSearched(false);
       return;
     }
-
+    useEffect(() => {
+      if (shouldCreateWelcomeNote()) {
+        useNoteStore.getState().addNewNote(getWelcomeNote());
+      }
+    }, []);
     const timeout = setTimeout(async () => {
       setLoading(true);
       const res = await fetch(`/api/notes?q=${encodeURIComponent(query)}`);

@@ -18,7 +18,8 @@ import { useAiActions } from "@/hooks/ai";
 export default function MrNote() {
   const [editing, setEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { updateNote, selectedNote, deleteNote, setSelectedNote } = useNoteStore();
+  const { updateNote, selectedNote, deleteNote, setSelectedNote } =
+    useNoteStore();
   const [value, setValue] = useState(selectedNote?.content ?? "");
   const [title, setTitle] = useState(selectedNote?.title ?? "");
   const router = useRouter();
@@ -27,51 +28,39 @@ export default function MrNote() {
   const [isChanged, setIsChanged] = useState(false);
 
   //handlers
-  async function handleSave() {
+  function handleSave() {
     if (!selectedNote) return;
-    if (title.trim() === "") {
+    if (!title.trim()) {
       toast.error("Title can't be empty");
       return;
     }
 
-    setIsLoading(true);
-
-    toast.promise(
-      updateNote(selectedNote.id, { content: value, title })
-        .then(() => {
-          setIsChanged(false);
-        })
-        .finally(() => {
-          setIsLoading(false);
-        }),
-      {
-        loading: "Updating...",
-        success: "Updated",
-        error: "Failed to save",
-      }
-    );
-
-    setEditing(false);
+    try {
+      updateNote(selectedNote.id, { title, content: value });
+      setIsChanged(false);
+      toast.success("Saved");
+    } catch {
+      toast.error("Failed to save");
+    }
   }
-  async function handleDelete() {
+
+  function handleDelete() {
     if (!selectedNote) return;
 
-    setIsLoading(true);
     try {
-      toast.promise(deleteNote(selectedNote.id), {
-        loading: "Deleting...",
-        success: "Deleted",
-        error: "Failed to delete",
-      });
+      deleteNote(selectedNote.id);
+      setSelectedNote(null);
       setIsChanged(false);
-      router.push("/");
+      toast.success("Deleted");
+
       if (isSmol && NoteWrapper) {
         NoteWrapper.style.transform = "translateX(0%)";
       }
-    } finally {
-      setIsLoading(false);
+    } catch {
+      toast.error("Failed to delete");
     }
   }
+
   // AI Features
   const AI = useAiActions({ value, setValue, setTitle, setIsLoading });
   // all useEffects here
@@ -132,7 +121,7 @@ export default function MrNote() {
                 NoteWrapper.style.transform = "translateX(0%)";
                 router.push("/");
               }
-              setSelectedNote(null)
+              setSelectedNote(null);
             }}
           >
             <ArrowLeft />

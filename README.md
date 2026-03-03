@@ -109,19 +109,12 @@ AI functionality is implemented with Google GenAI:
 ---
 
 
-## 🌍 Deployment
-
-Deploy frontend + backend on **Vercel**
-
-Live Demo: https://ai-note-taking-app-rho.vercel.app/
-
----
-
 ## 📦 Repository
 
 https://github.com/shivam4940x/AI-Note-Taking-App
 ---
 
+# This poject is long forgotten
 
 
 

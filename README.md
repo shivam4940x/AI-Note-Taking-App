@@ -112,9 +112,7 @@ AI functionality is implemented with Google GenAI:
 ## 📦 Repository
 
 https://github.com/shivam4940x/AI-Note-Taking-App
----
 
-# This poject is long forgotten
 
 
 
